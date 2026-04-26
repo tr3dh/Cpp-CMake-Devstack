@@ -1,0 +1,18 @@
+GMP LGPLv3 Relink Instructions (MSYS2 MinGW)
+============================================
+
+Source Code: gmp-6.3.0.tar.xz (unverändert)
+
+Provide Build : Mingw
+--------------------------------
+pacman -S mingw-w64-x86_64-gmp mingw-w64-x86_64-gmpxx
+
+Provide Build : aus Source bauen
+--------------------------
+tar -xf gmp-6.3.0.tar.xz
+cd gmp-6.3.0
+./configure --enable-static --enable-cxx --host=x86_64-w64-mingw32
+make -j$(nproc)
+cp .libs/libgmp.a .libs/libgmpxx.a $MINGW_PREFIX/lib/
+
+Dann Projekt neu bauen über: $ make launch

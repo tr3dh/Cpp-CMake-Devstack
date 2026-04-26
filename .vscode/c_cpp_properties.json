@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "MSVC",
+            "compileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
+            "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "GCC (MinGW)",
+            "compileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
