@@ -1,14 +1,17 @@
-# Open-Source Engine Stack CMake Starter
+# C++ Devstack CMake Starter
 
-Dieses Projekt ist ein CMake-Template, dass verwendet werden kann um einen aus Open-Source-Bibliothek bestehenden Engine-Stack auszusetzen.
+This project is a CMake template that can be used to set up a devstack consisting of mostly open-source libraries.
 
 # Releases
 
-Für binäre Releases müssen die Lizenzen der verwendeten Libs gecheckt werden. GMP zum Beispiel verlangt bei statischem Linking in binären Releases die Mitauslieferung des GMP-Source-Codes und einer relink-gmp.txt. Zusätzlich sollten alle verwendeten Bibliotheken in der `README` genannt werden und über eine `Thridparty-Licenses.md` oder einen Ordner, der die entsprechenden Lizenzen enthält mitgeliefert werden.  
+For binary releases, the licenses of the libraries used must be checked. GMP, for example, requires that the GMP source code and a relink-gmp.txt file be included when statically linking in binary releases. Additionally, all libraries used should be listed in the `README` and provided via a `Thirdparty-Licenses.md` file or a folder containing the corresponding licenses.
 
-# Verwendete Bibliotheken
+# Used Libraries
 
-| Library | Lizenz | GitHub |
+The CMake project sets up the open-source libraries on its own; the Steam SDK must be downloaded as a pre-built version directly from Valve.
+The complete license texts, as well as the GMP source code and GMP relink instructions, can be found in [thirdPartyLicenses](thirdPartyLicenses/)
+
+| Library | License | Link |
 |---------|--------|--------|
 | SDL3 | zlib | [libsdl-org/SDL](https://github.com/libsdl-org/SDL) |
 | raylib | zlib | [raysan5/raylib](https://github.com/raysan5/raylib) |
@@ -33,4 +36,8 @@ Für binäre Releases müssen die Lizenzen der verwendeten Libs gecheckt werden.
 | ANGLE | BSD-3 | [mmozeiko/build-angle](https://github.com/mmozeiko/build-angle) |
 | Steam SDK | Steam Subscriber Agreement | [ValveSoftware/steamworks-api](https://github.com/ValveSoftware/steamworks-api) |
 
-Die vollständigen Lizenttexte, sowie der GMP-Source-Code und die GMP-Relink-Anweisungen befinden sich in [thirdPartyLicenses](thirdPartyLicenses/)
+# Used Assets
+
+| Asset | License | Link |
+|---------|--------|--------|
+| Stag GLTF | [CC0](https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt) | [quaternius/Stag.gltf](https://quaternius.com/packs/ultimateanimatedanimals.html) |

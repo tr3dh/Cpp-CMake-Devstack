@@ -24,16 +24,23 @@ function(provideLib targetDir repoUrl includeDirs cppDirs linkLibs extraOptions 
         execute_process(
 
             COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetDir}
+            WORKING_DIRECTORY ${targetDir}
             RESULT_VARIABLE git_result
         )
 
         #
         if(NOT gitTag STREQUAL "")
+            
+            # Tags explizit laden
+            execute_process(
+                COMMAND ${GIT_EXECUTABLE} fetch --tags
+                WORKING_DIRECTORY ${targetDir}
+                RESULT_VARIABLE git_fetch_result
+            )
 
             execute_process(
                 COMMAND ${GIT_EXECUTABLE} checkout ${gitTag}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetDir}
+                WORKING_DIRECTORY ${targetDir}
                 RESULT_VARIABLE git_result
             )
             if(NOT git_result EQUAL "0")
@@ -42,6 +49,7 @@ function(provideLib targetDir repoUrl includeDirs cppDirs linkLibs extraOptions 
             
             message(STATUS "Checked out tag ${gitTag}")
         endif()
+
     else()
 
         message(STATUS "Repository ${targetDir} exists")

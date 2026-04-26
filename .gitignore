@@ -50,3 +50,6 @@ imgui.ini
 # Komprimierte Dateien
 *.zip
 *.tar.gz
+
+#
+compile_commands.json

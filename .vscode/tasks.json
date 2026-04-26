@@ -35,38 +35,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Alberich Git Bash",
-            "type": "shell",
-            "command": "C:\\Program Files\\Git\\bin\\bash.exe",
-            "args": ["-l"],
-            "options": {
-                "cwd": "${workspaceFolder}/src/Alberich"
-            },
-            "presentation": {
-                "echo": false,
-                "reveal": "always",
-                "focus": true,
-                "panel": "new"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "ByteSeq Git Bash",
-            "type": "shell",
-            "command": "C:\\Program Files\\Git\\bin\\bash.exe",
-            "args": ["-l"],
-            "options": {
-                "cwd": "${workspaceFolder}/src/Alberich/src/Alberich/ByteSequence"
-            },
-            "presentation": {
-                "echo": false,
-                "reveal": "always",
-                "focus": true,
-                "panel": "new"
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Toggle Vim",
             "type": "process",
             "command": "${command:toggleVim}",
