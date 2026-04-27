@@ -1,5 +1,88 @@
+#include <string>
+#include <Bitmask.h>
+
 #include "raylib.h"
 #include <steam/steam_api.h>
+
+/**
+ * @page hinweise Allgemeine Hinweise
+ *
+ * Freier Text der einen allgemeinen Hinweis liefert.
+ *
+ * @note Das ist eine Randnotiz ohne Bezug zu einer Funktion.
+ *
+ * Unterseiten:
+ * - @subpage hinweise_usage
+ * - @subpage hinweise_known_issues
+ */
+
+/**
+ * @page hinweise_usage Verwendung
+ *
+ * Hier steht wie man das Projekt verwendet.
+ *
+ * @note Darauf achten dass die Konfiguration vorher geladen wird.
+ */
+
+/**
+ * @page hinweise_known_issues Bekannte Probleme
+ *
+ * Liste bekannter Probleme und Workarounds.
+ *
+ * @warning Dieser Abschnitt wird noch gepflegt.
+ */
+
+/**
+ * @brief Eine Testklasse zur Demonstration der Doxygen-Dokumentation
+ * @details Weitere Infos zur Testklasse
+ */
+class TestClass {
+public:
+    /**
+     * @brief Konstruktor
+     * @param name Name des Objekts
+     */
+    TestClass(const std::string& name) : m_name(name) {}
+
+    /**
+     * @brief Gibt den Namen zurück
+     * @return Name des Objekts
+     */
+    std::string getName() const { return m_name; }
+
+    /**
+     * @brief Setzt den Namen
+     * @param name Neuer Name
+     */
+    void setName(const std::string& name) { m_name = name; }
+
+private:
+    std::string m_name; ///< Name des Objekts
+};
+
+/**
+ * @brief Ein Teststruct zur Demonstration der Doxygen-Dokumentation
+ */
+struct TestStruct {
+
+    /// Eindeutige ID
+    int id;          
+    std::string tag; ///< Beschreibungs-Tag
+    float value;     ///< Numerischer Wert
+};
+
+/**
+ * @brief Testfunktion für die Doxygen-Dokumentation
+ * 
+ * Diese Funktion demonstriert die Doxygen-Dokumentation.
+ * 
+ * @param a Erster Wert
+ * @param b Zweiter Wert
+ * @return Summe von a und b
+ */
+int test(int a, int b) {
+    return a + b;
+}
 
 //
 int main(void)
@@ -33,7 +116,7 @@ int main(void)
 
     // Animation playing variables
     unsigned int animIndex = 0;                     // Current animation playing
-    float animCurrentFrame = 0;              // Current animation frame
+    float animCurrentFrame = 0;                     // Current animation frame
 
     // SetTargetFPS(60);                               // Set our game to run at 60 frames-per-second
 

@@ -53,6 +53,6 @@ rlaunch:
 
 ICON ?= Recc/Compilation/icon
 icon:
-	magick "$(ICON).png" -define icon:auto-resize=16,32,48,64,128,256 "$(ICON).ico"; \
+	magick "$(ICON).png" -define icon:auto-resize=16,32,48,64,128,256 "$(ICON).ico";
 
 dlaunch: launch

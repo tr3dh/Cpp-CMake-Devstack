@@ -39,6 +39,7 @@ provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SDL" "https://github.com/libs
 if(NOT USE_ANGLE)
 
     provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib" "https://github.com/raysan5/raylib" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib/src" "" "raylib" "OPENGL_VERSION=4.3;BUILD_EXAMPLES=OFF" "tags/6.0") # tags/5.5
+    provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d" "https://github.com/Bigfoot71/r3d" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d/include" "" "r3d" "" "") # tags/5.5
 else()
 
     if(NOT DEFINED ANGLE_ROOT)
@@ -57,6 +58,7 @@ else()
     include_directories("${ANGLE_INC}")
 
     provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib" "https://github.com/raysan5/raylib" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib/src" "" "raylib" "OPENGL_VERSION=ES 2.0;BUILD_EXAMPLES=OFF" "tags/6.0") # tags/5.5
+    provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d" "https://github.com/Bigfoot71/r3d" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d/include" "" "r3d" "" "") # tags/5.5
 
     find_library(ANGLE_EGL   NAMES EGL   libEGL   HINTS "${ANGLE_LIB_DIR}" REQUIRED)
     find_library(ANGLE_GLES2 NAMES GLESv2 libGLESv2 HINTS "${ANGLE_LIB_DIR}" REQUIRED)

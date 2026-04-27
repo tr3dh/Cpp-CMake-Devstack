@@ -25,7 +25,7 @@
 *.LOG
 
 # Dokumente
-*.html
+# *.html
 
 # Proj Dirs
 build/
@@ -50,6 +50,8 @@ imgui.ini
 # Komprimierte Dateien
 *.zip
 *.tar.gz
+
+docs/doku/
 
 #
 compile_commands.json

@@ -1,5 +1,7 @@
 # C++ Devstack CMake Starter
 
+# Project Brief
+
 This project is a CMake template that can be used to set up a devstack consisting of mostly open-source libraries.
 
 # Releases
@@ -41,3 +43,9 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 | Asset | License | Link |
 |---------|--------|--------|
 | Stag GLTF | [CC0](https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt) | [quaternius/Stag.gltf](https://quaternius.com/packs/ultimateanimatedanimals.html) |
+
+# Used Tools
+
+| Tool | License | Link |
+|---------|---------|---------|
+| doxygen | GPL-2.0 | [doxygen/doxygen](https://github.com/doxygen/doxygen)|

@@ -1,9 +1,12 @@
 ifeq ($(OS),Windows_NT)
     ifeq ($(MSYSTEM),)
-        include Makefiles/win.mk
+        include Makefiles/platform/win.mk
+        include Makefiles/utils.win.mk
     else
-        include Makefiles/mingw64.mk
+        include Makefiles/platform/mingw64.mk
+        include Makefiles/utils.mingw64.mk
     endif
 else
-    include Makefiles/Makefile.unix
+    include Makefiles/platform/unix.mk
+    include Makefiles/utils.unix.mk
 endif
