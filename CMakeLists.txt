@@ -119,6 +119,9 @@ provideHeaderOnlyLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt" "https://gith
 # spdlog für verbessertes Logging
 provideLib("thirdParty/spdlog" "https://github.com/gabime/spdlog" "thirdParty/spdlog/src" "" "spdlog" "" "")
 
+# sql lite cpp
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SQLiteCpp" "https://github.com/SRombauts/SQLiteCpp" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SQLiteCpp/include" "" "SQLiteCpp" "" "")
+
 # -------------------------------------------------------
 # Networking Includes
 # -------------------------------------------------------

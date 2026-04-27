@@ -4,6 +4,9 @@
 #include "raylib.h"
 #include <steam/steam_api.h>
 
+#include <SQLiteCpp/SQLiteCpp.h>
+#include <SQLiteCpp/Backup.h>
+
 /**
  * @page hinweise Allgemeine Hinweise
  *

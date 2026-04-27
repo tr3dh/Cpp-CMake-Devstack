@@ -17,6 +17,7 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 |---------|--------|--------|
 | SDL3 | zlib | [libsdl-org/SDL](https://github.com/libsdl-org/SDL) |
 | raylib | zlib | [raysan5/raylib](https://github.com/raysan5/raylib) |
+| r3d | ZLib license | [bigfoot71/r3d](https://github.com/Bigfoot71/r3d) |
 | Dear ImGui | MIT | [ocornut/imgui](https://github.com/ocornut/imgui) |
 | ImPlot | MIT | [epezent/implot](https://github.com/epezent/implot) |
 | imgui-filebrowser | MIT | [AirGuanZ/imgui-filebrowser](https://github.com/AirGuanZ/imgui-filebrowser) |
@@ -37,6 +38,7 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 | kompute | Apache-2.0 | [KomputeProject/kompute](https://github.com/KomputeProject/kompute) |
 | ANGLE | BSD-3 | [mmozeiko/build-angle](https://github.com/mmozeiko/build-angle) |
 | Steam SDK | Steam Subscriber Agreement | [ValveSoftware/steamworks-api](https://github.com/ValveSoftware/steamworks-api) |
+| SQLiteCpp | MIT | [SRombauts/SQLiteCpp](https://github.com/SRombauts/SQLiteCpp) |
 
 # Used Assets
 
