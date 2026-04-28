@@ -9,7 +9,7 @@ PROJECT_NAME ?= proj
 DOXYDIR ?= doxy
 DOXYFILE ?= $(DOXYDIR)/Doxyfile.$(PROJECT_NAME)
 
-INPUT ?= src
+INPUT ?= src Procs Tests
 OUTPUT ?= docs/doku/$(PROJECT_NAME)
 
 PROJECT_LOGO ?= Recc/Compilation/icon.png
@@ -30,7 +30,7 @@ createDoxyfile:
 		r'(PROJECT_NAME\s*=).*':      r'\1 "$(PROJECT_NAME)"',
 		r'(PROJECT_LOGO\s*=).*':      r'\1 $(PROJECT_LOGO)',
 		r'(PROJECT_ICON\s*=).*':      r'\1 $(PROJECT_ICON)',
-		r'(INPUT\s*=).*':             r'\1 $(INPUT) ../README.md',
+		r'(INPUT\s*=).*':             r'\1 $(INPUT) README.md',
 		r'(PROJECT_LOGO\s*=).*':             r'\1 $(PROJECT_LOGO)',
 		r'(PROJECT_ICON\s*=).*':             r'\1 $(PROJECT_ICON)',
 		r'(GENERATE_TREEVIEW\s*=).*':     r'\1 YES',
@@ -47,9 +47,9 @@ createDoxyfile:
 		r'(INLINE_SIMPLE_STRUCTS\s*=).*': r'\1 NO',
 		r'(ALPHABETICAL_INDEX\s*=).*': r'\1 NO',
 		r'(USE_MDFILE_AS_MAINPAGE\s*=).*': r'\1 README.md',
-		r'(INPUT\s*=).*':                  r'\1 $(INPUT) README.md',
 		r'(EXTRACT_LOCAL_VARS\s*=).*':                  r'\1 YES',
 		r'(JAVADOC_AUTOBRIEF\s*=).*':                  r'\1 YES',
+		r'(RECURSIVE\s*=).*':                  r'\1 YES',
 	}
 
 	for pattern, replacement in replacements.items(): text = re.sub(pattern, replacement, text)

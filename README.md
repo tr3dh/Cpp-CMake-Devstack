@@ -39,6 +39,7 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 | ANGLE | BSD-3 | [mmozeiko/build-angle](https://github.com/mmozeiko/build-angle) |
 | Steam SDK | Steam Subscriber Agreement | [ValveSoftware/steamworks-api](https://github.com/ValveSoftware/steamworks-api) |
 | SQLiteCpp | MIT | [SRombauts/SQLiteCpp](https://github.com/SRombauts/SQLiteCpp) |
+| googletest | BSD-3-Clause | [google/googletest](https://github.com/google/googletest) |
 
 # Used Assets
 

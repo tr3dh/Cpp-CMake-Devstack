@@ -1,7 +1,12 @@
+#define NOGDI
+#define NOUSER
+#define WIN32_LEAN_AND_MEAN
+
+#include "raylib.h"
+
 #include <string>
 #include <Bitmask.h>
 
-#include "raylib.h"
 #include <steam/steam_api.h>
 
 #include <SQLiteCpp/SQLiteCpp.h>

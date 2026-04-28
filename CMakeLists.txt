@@ -187,6 +187,13 @@ endif()
 includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
 
 # -------------------------------------------------------
+# Testing
+# -------------------------------------------------------
+
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/googletest" "https://github.com/google/googletest" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/googletest/include" "" ""
+    "" "")
+
+# -------------------------------------------------------
 # Source Code
 # -------------------------------------------------------
 
@@ -208,89 +215,141 @@ message(STATUS "CPPOBJS contains: ${CPPOBJS}")
 message(STATUS "INCLUDES contains: ${INCLUDES}")
 message(STATUS "LINKLIBS contains: ${LINKLIBS}")
 
-# Create your executable
-add_executable(proj ${CPPOBJS} Recc/Compilation/recc.rc)
+add_library(srclib STATIC ${CPPOBJS})
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "Building in DEBUG mode")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "Building in RELEASE mode")
-
-    set_target_properties(proj PROPERTIES
-        WIN32_EXECUTABLE TRUE
-    )
-
-    # Nur für MSVC
-    if(MSVC OR CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        set_target_properties(proj PROPERTIES
-            LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
-        )
-    # Nur für GCC / Clang
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_link_options(proj PRIVATE -mwindows)
-    endif()
-
-    apply_aggressive_optimizations(proj)
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    message(STATUS "Building in RELEASE WITH DEBUG INFO mode")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    message(STATUS "Building in MINIMUM SIZE RELEASE mode")
-
-endif()
-
-target_compile_options(proj PRIVATE
+target_compile_options(srclib PUBLIC
     $<$<CXX_COMPILER_ID:MSVC>:/GR- /EHs- /EHc->
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-rtti -fno-exceptions>
-    -fexceptions 
+    -fexceptions
 )
 
-#
-target_link_libraries(proj
+target_link_options(srclib PUBLIC -Wl,--allow-multiple-definition)
 
-    PRIVATE
-    -static
-    ${LINKLIBS}
-)
+target_link_libraries(srclib PUBLIC -static ${LINKLIBS})
+target_include_directories(srclib PUBLIC ${INCLUDES})
 
-#
-target_include_directories(proj
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
 
-    PRIVATE
-    ${INCLUDES}
-)
-
-# Kopiert Steam DLL
-add_custom_command(TARGET proj POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_DLL_NAME}"
-        $<TARGET_FILE_DIR:proj>
-    COMMENT "Copying DLLS"
-)
-
-# Legt steam_appid file an damit Steam API default ID findet und Start nicht terminiert
-add_custom_command(TARGET proj POST_BUILD
-
-    COMMAND ${CMAKE_COMMAND} -E echo "480" > $<TARGET_FILE_DIR:proj>/steam_appid.txt
-    COMMENT "Generating SteamAppId.txt"
-)
-
-if(USE_ANGLE)
-
-    # Kopiere DLLS postbuild
-    foreach(_dll IN LISTS ANGLE_DLLS)
-
-        # if(NOT IS_ABSOLUTE "${_dll}")
-
-        #     set(_dll "${ANGLE_LIB_DIR}/${_dll}")
-        # endif()
-        
-        add_custom_command(TARGET proj POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${_dll}"
-                "$<TARGET_FILE_DIR:proj>"
-            COMMENT "Kopiere ANGLE DLL: ${_dll}")
-    endforeach()
+    apply_aggressive_optimizations(srclib)
 endif()
+
+file(GLOB PROC_SOURCES "Procs/native/*.cpp")
+
+foreach(procSrc IN LISTS PROC_SOURCES)
+
+    get_filename_component(proc ${procSrc} NAME_WE)
+
+endforeach()
+
+file(GLOB_RECURSE PROC_SOURCES "Procs/*.cpp")
+
+foreach(proc_src IN LISTS PROC_SOURCES)
+
+    get_filename_component(proc_name ${proc_src} NAME_WE)
+
+    add_executable(${proc_name} ${proc_src} Recc/Compilation/recc.rc)
+
+    # if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Building in DEBUG mode")
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        message(STATUS "Building in Debug mode")
+
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+        message(STATUS "Building in RELEASE mode")
+
+        if(NOT proc_src MATCHES ".*/native/.*")
+
+        else()
+
+            set_target_properties(${proc_name} PROPERTIES
+                WIN32_EXECUTABLE TRUE
+            )
+
+        endif()
+
+        if(NOT proc_src MATCHES ".*/native/.*")
+
+        # Nur für MSVC
+        elseif(MSVC OR CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            set_target_properties(${proc_name} PROPERTIES
+                LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
+            )
+        # Nur für GCC / Clang
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            target_link_options(${proc_name} PRIVATE -mwindows)
+        endif()
+
+        apply_aggressive_optimizations(${proc_name})
+
+    elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        message(STATUS "Building in RELEASE WITH DEBUG INFO mode")
+
+    elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+        message(STATUS "Building in MINIMUM SIZE RELEASE mode")
+
+    endif()
+
+    target_link_libraries(${proc_name} PUBLIC srclib)
+
+    # Kopiert Steam DLL
+    add_custom_command(TARGET ${proc_name} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_DLL_NAME}"
+            $<TARGET_FILE_DIR:${proc_name}>
+        COMMENT "Copying DLLS"
+    )
+
+    # Legt steam_appid file an damit Steam API default ID findet und Start nicht terminiert
+    add_custom_command(TARGET ${proc_name} POST_BUILD
+
+        COMMAND ${CMAKE_COMMAND} -E echo "480" > $<TARGET_FILE_DIR:${proc_name}>/steam_appid.txt
+        COMMENT "Generating SteamAppId.txt"
+    )
+
+    if(USE_ANGLE)
+
+        # Kopiere DLLS postbuild
+        foreach(_dll IN LISTS ANGLE_DLLS)
+
+            # if(NOT IS_ABSOLUTE "${_dll}")
+
+            #     set(_dll "${ANGLE_LIB_DIR}/${_dll}")
+            # endif()
+            
+            add_custom_command(TARGET ${proc_name} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${_dll}"
+                    "$<TARGET_FILE_DIR:${proc_name}>"
+                COMMENT "Kopiere ANGLE DLL: ${_dll}")
+        endforeach()
+    endif()
+
+endforeach()
+
+enable_testing()
+
+file(GLOB_RECURSE TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
+
+if(TEST_SOURCES)
+
+    add_executable(execTests ${TEST_SOURCES} Recc/Compilation/recc.rc)
+    target_link_libraries(execTests PRIVATE srclib GTest::gtest_main)
+
+    include(GoogleTest)
+    gtest_discover_tests(execTests)
+endif()
+
+#
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/launchWrapTests.cpp" "
+#include <cstdlib>
+int main() {
+    std::system(\"execTests.exe\");
+    std::system(\"pause\");
+    return 0;
+}
+")
+
+#
+add_executable(launchWrapTests "${CMAKE_CURRENT_BINARY_DIR}/launchWrapTests.cpp" Recc/Compilation/recc.rc)
+set_target_properties(launchWrapTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
