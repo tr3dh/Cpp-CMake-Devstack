@@ -59,7 +59,15 @@ launch:
 	$(MAKE) build BUILDDIR=$(BUILDDIR) BUILDMODE=$(BUILDMODE)
 	$(MAKE) exec BUILDDIR=$(BUILDDIR)
 
-rlaunch :
-	make launch BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release SKIPFLSAMPLES=OFF
+rbuild:
+	$(MAKE) build BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release
+
+rexec:
+	$(MAKE) exec BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release
+
+rlaunch: rbuild rexec
+
+# rlaunch :
+# 	make launch BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release SKIPFLSAMPLES=OFF
 
 dlaunch : launch

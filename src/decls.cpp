@@ -1,3 +1,1 @@
-int decl(){
-    return 0;
-}
+int decl(){}

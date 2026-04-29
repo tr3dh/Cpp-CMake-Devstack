@@ -55,3 +55,6 @@ docs/doku/
 
 #
 compile_commands.json
+
+#
+Doxyfile*

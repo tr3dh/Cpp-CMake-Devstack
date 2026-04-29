@@ -4,9 +4,16 @@ project(Proj LANGUAGES C CXX)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fexceptions")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fexceptions")
+
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
+if(NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fexceptions")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fexceptions")
+endif()
 
 include(${CMAKE_SOURCE_DIR}/cmake/AggressiveOptimizations.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/provideLibrarys.cmake)
@@ -33,13 +40,12 @@ set(THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty")
 
 option(USE_ANGLE "Link gegen ANGLE statt nativen OpenGL-Treiber" OFF)
 
-provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SDL" "https://github.com/libsdl-org/SDL" "" "" "SDL3-static" "SDL_SHARED=OFF;SDL_STATIC=ON;SDL_TEST=OFF" "")
-
 # Angle downloads über pacman package (msys mingw) oder unter https://github.com/mmozeiko/build-angle/releases/latest (msvc builds)
 if(NOT USE_ANGLE)
 
     provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib" "https://github.com/raysan5/raylib" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib/src" "" "raylib" "OPENGL_VERSION=4.3;BUILD_EXAMPLES=OFF" "tags/6.0") # tags/5.5
-    provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d" "https://github.com/Bigfoot71/r3d" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d/include" "" "r3d" "" "") # tags/5.5
+    # provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d" "https://github.com/Bigfoot71/r3d" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d/include" "" "r3d" "" "") # tags/5.5
+    
 else()
 
     if(NOT DEFINED ANGLE_ROOT)
@@ -58,7 +64,7 @@ else()
     include_directories("${ANGLE_INC}")
 
     provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib" "https://github.com/raysan5/raylib" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/raylib/src" "" "raylib" "OPENGL_VERSION=ES 2.0;BUILD_EXAMPLES=OFF" "tags/6.0") # tags/5.5
-    provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d" "https://github.com/Bigfoot71/r3d" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d/include" "" "r3d" "" "") # tags/5.5
+    # provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d" "https://github.com/Bigfoot71/r3d" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/r3d/include" "" "r3d" "" "") # tags/5.5
 
     find_library(ANGLE_EGL   NAMES EGL   libEGL   HINTS "${ANGLE_LIB_DIR}" REQUIRED)
     find_library(ANGLE_GLES2 NAMES GLESv2 libGLESv2 HINTS "${ANGLE_LIB_DIR}" REQUIRED)
@@ -85,6 +91,8 @@ buildStaticLib(rlImGui "${THIRD_PARTY}/rlImGui" "${THIRD_PARTY}/rlImGui" "rlImGu
 
 list(APPEND LINKLIBS rlImGui)
 # rlImgui Includes liegen direkt unter thirdParty/rlImgui/rlImgui.h
+
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SDL" "https://github.com/libsdl-org/SDL" "" "" "SDL3-static" "SDL_SHARED=OFF;SDL_STATIC=ON;SDL_TEST=OFF" "")
 
 # -------------------------------------------------------
 # Procedural Generation Includes
@@ -144,6 +152,7 @@ list(APPEND LINKLIBS "Jolt")
 # Maths Includes
 # -------------------------------------------------------
 
+# GMP kann für MSVC als fertiger prebuild beschafft unter 'thirdParty' abgelegt und per 'includePrebuildLib' eingebunden werden
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
     # Funktioniert nur für Msys Mingw
@@ -218,12 +227,11 @@ message(STATUS "LINKLIBS contains: ${LINKLIBS}")
 add_library(srclib STATIC ${CPPOBJS})
 
 target_compile_options(srclib PUBLIC
-    $<$<CXX_COMPILER_ID:MSVC>:/GR- /EHs- /EHc->
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-rtti -fno-exceptions>
-    -fexceptions
+    $<$<CXX_COMPILER_ID:MSVC>:/EHsc /GR>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fexceptions>
 )
 
-target_link_options(srclib PUBLIC -Wl,--allow-multiple-definition)
+# target_link_options(srclib PUBLIC -Wl,--allow-multiple-definition)
 
 target_link_libraries(srclib PUBLIC -static ${LINKLIBS})
 target_include_directories(srclib PUBLIC ${INCLUDES})
@@ -290,6 +298,7 @@ foreach(proc_src IN LISTS PROC_SOURCES)
 
     endif()
 
+    #
     target_link_libraries(${proc_name} PUBLIC srclib)
 
     # Kopiert Steam DLL
@@ -334,6 +343,8 @@ file(GLOB_RECURSE TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
 if(TEST_SOURCES)
 
     add_executable(execTests ${TEST_SOURCES} Recc/Compilation/recc.rc)
+
+    #
     target_link_libraries(execTests PRIVATE srclib GTest::gtest_main)
 
     include(GoogleTest)

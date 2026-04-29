@@ -1,3 +1,5 @@
+include Makefiles/utils/utils.$(PLATFORM_PREFIX).mk
+
 BUILD_PREFIX = _MINGW_GCCx64
 
 BUILDDIR_RELEASE = __build/__buildNDBUG$(BUILD_PREFIX)
@@ -48,11 +50,10 @@ clear:
 
 launch: build exec
 
-rlaunch:
-	$(MAKE) launch BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release
+rbuild:
+	$(MAKE) build BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release
 
-ICON ?= Recc/Compilation/icon
-icon:
-	magick "$(ICON).png" -define icon:auto-resize=16,32,48,64,128,256 "$(ICON).ico";
+rexec:
+	$(MAKE) exec BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release
 
-dlaunch: launch
+rlaunch: rbuild rexec

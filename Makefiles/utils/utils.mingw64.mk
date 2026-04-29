@@ -15,7 +15,7 @@ OUTPUT ?= docs/doku/$(PROJECT_NAME)
 PROJECT_LOGO ?= Recc/Compilation/icon.png
 PROJECT_ICON ?= Recc/Compilation/icon.png
 
-createDoxyfile:
+configDocs:
 	@mkdir -p $(DOXYDIR)
 	@doxygen -g $(DOXYFILE)
 	@python - <<'PY'
@@ -57,15 +57,15 @@ createDoxyfile:
 	path.write_text(text, encoding="utf-8")
 	PY
 
-deleteDoxyfile:
+clearDocs:
 	rm $(DOXYFILE)
 	rm $(DOXYFILE).bak
 
-buildDoxy:
+buildDocs:
 	@mkdir -p $(OUTPUT)
 	@doxygen $(DOXYFILE)
 
-displaySite:
+displayDocs:
 	@echo off
 	start "" docs/index.html
 
@@ -76,3 +76,33 @@ DOKU_DIR ?= __build/
 copyltex:
 	cp docs/doku/$(PROJECT_NAME)/latex/refman.pdf $(DOKU_DIR)
 	mv $(DOKU_DIR)/refman.pdf $(DOKU_DIR)/$(PROJECT_NAME)Doku.doxy.pdf
+
+package:
+		
+	@echo "CWD: $(CURDIR)"
+	rm -rf tmp
+	mkdir tmp
+
+	mkdir -p tmp/__build
+	find __build \
+		\( -path '*/tmp/*' -o -path '*/CMakeFiles/*' -o -path '*/lib/*' -o -path '*/thirdParty/*' \) -prune -o \
+		\( -type f -name '*.exe' -o -name '*.dll' -o -name 'steam_appid.txt' \) \
+		-exec cp --parents {} tmp/ \;
+
+	cp -r Recc tmp/
+	cp -r docs tmp/
+	cp -r thirdPartyLicenses tmp/
+#	cp -r Batch tmp/
+	cp -f VERSION tmp/
+	cp -f LICENSE tmp/
+	cp -f README.md tmp/
+	cp -f README.de.md tmp/
+	cp -f MAINTAINING.md tmp/
+	cp -f CONTRIBUTING.md tmp/
+
+	mkdir -p __OUT
+	zip -r __OUT/$(PROJECT_NAME).zip tmp/*
+
+	rm -rf tmp
+
+exportPackage: build rbuild package
