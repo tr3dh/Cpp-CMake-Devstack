@@ -122,7 +122,7 @@ provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/pybind11" "https://github.com
 provideHeaderOnlyLib("thirdParty/json" "https://github.com/nlohmann/json.git" "thirdParty/json/include" "" "")
 
 # entt (ECS)
-provideHeaderOnlyLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt" "https://github.com/skypjack/entt" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt/src" "" "")
+provideHeaderOnlyLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt" "https://github.com/skypjack/entt" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt/single_include/" "" "")
 
 # spdlog für verbessertes Logging
 provideLib("thirdParty/spdlog" "https://github.com/gabime/spdlog" "thirdParty/spdlog/src" "" "spdlog" "" "")
