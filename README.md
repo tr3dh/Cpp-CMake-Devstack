@@ -83,6 +83,7 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 | Steam SDK | Steam Subscriber Agreement | [ValveSoftware/steamworks-api](https://github.com/ValveSoftware/steamworks-api) |
 | SQLiteCpp | MIT | [SRombauts/SQLiteCpp](https://github.com/SRombauts/SQLiteCpp) |
 | googletest | BSD-3-Clause | [google/googletest](https://github.com/google/googletest) |
+| cs_libguarded | BSD-2-Clause | [copperspice/cs_libguarded](https://github.com/copperspice/cs_libguarded) |
 
 # Used Assets
 

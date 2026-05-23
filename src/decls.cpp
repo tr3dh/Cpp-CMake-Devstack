@@ -1,1 +1,1 @@
-int decl(){}
+int decl(){ return 1; }

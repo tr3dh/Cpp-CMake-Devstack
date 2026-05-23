@@ -130,6 +130,10 @@ provideLib("thirdParty/spdlog" "https://github.com/gabime/spdlog" "thirdParty/sp
 # sql lite cpp
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SQLiteCpp" "https://github.com/SRombauts/SQLiteCpp" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SQLiteCpp/include" "" "SQLiteCpp" "" "")
 
+# cs_libguarded
+getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cs_libguarded" "https://github.com/copperspice/cs_libguarded.git" "")
+list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cs_libguarded/src")
+
 # -------------------------------------------------------
 # Networking Includes
 # -------------------------------------------------------
