@@ -19,7 +19,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/AggressiveOptimizations.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/provideLibrarys.cmake)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -198,6 +198,30 @@ endif()
 
 # Steam über name als prebuildLib einginden
 includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
+
+# -------------------------------------------------------
+# LLVM
+# -------------------------------------------------------
+
+# Bereitstellung auch über provideLib oder FetchContent möglich benötigt aber lange Buildzeiten
+# und viel Speicherplatz
+
+find_package(LLVM REQUIRED CONFIG)
+
+list(APPEND INCLUDES "${LLVM_INCLUDE_DIRS}")
+
+separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+add_definitions(${LLVM_DEFINITIONS_LIST})
+
+llvm_map_components_to_libnames(LLVM_LIBS
+    core
+    orcjit
+    native
+    passes
+    irreader
+)
+
+list(APPEND LINKLIBS "${LLVM_LIBS}")
 
 # -------------------------------------------------------
 # Testing
