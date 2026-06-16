@@ -85,6 +85,7 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 | googletest | BSD-3-Clause | [google/googletest](https://github.com/google/googletest) |
 | cs_libguarded | BSD-2-Clause | [copperspice/cs_libguarded](https://github.com/copperspice/cs_libguarded) |
 | LLVM | Apache-2.0 | [llvm/llvm-project](https://github.com/llvm/llvm-project.git) |
+| rbfx | MIT | [rbfx/rbfx](https://github.com/rbfx/rbfx) |
 
 # Used Assets
 

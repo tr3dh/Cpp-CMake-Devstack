@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
+
 project(Proj LANGUAGES C CXX)
 
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
@@ -33,6 +34,17 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty")
 
 set(LIB_OUT "${CMAKE_CURRENT_BINARY_DIR}/libs")
 set(THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty")
+
+# -------------------------------------------------------
+# Vorgezogenen Includes gegen Target Mehrfachdefinitionen
+# -------------------------------------------------------
+
+# Sowohl eigen als auch rebelfork versuchen ein 'uninstall' Target zu erstellen
+# Eigen führt dabei keinen check aus ob das target schon existiert,
+# Die rebelfork abhängigkeit schon. Deshalb wird zuerst Eigen hinzugefügt, um Konflikte zu vermeiden 
+
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
+    "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
 
 # -------------------------------------------------------
 # Rendering Includes
@@ -72,6 +84,11 @@ else()
     list(APPEND LINKLIBS ${ANGLE_EGL} ${ANGLE_GLES2})
 
 endif()
+
+#
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx" "https://github.com/rbfx/rbfx"
+            "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx/Source"
+            "" "Urho3D" "URHO3D_VULKAN=1;RBFX_SKIP_INSTALL=ON;URHO3D_SAMPLES=ON" "")
 
 # Imgui + verwendete Extensions
 getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/imgui" "https://github.com/ocornut/imgui" "")
@@ -124,8 +141,8 @@ provideHeaderOnlyLib("thirdParty/json" "https://github.com/nlohmann/json.git" "t
 # entt (ECS)
 provideHeaderOnlyLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt" "https://github.com/skypjack/entt" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt/single_include/" "" "")
 
-# spdlog für verbessertes Logging
-provideLib("thirdParty/spdlog" "https://github.com/gabime/spdlog" "thirdParty/spdlog/src" "" "spdlog" "" "")
+# # spdlog für verbessertes Logging
+# provideLib("thirdParty/spdlog" "https://github.com/gabime/spdlog" "thirdParty/spdlog/src" "" "spdlog" "" "")
 
 # sql lite cpp
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SQLiteCpp" "https://github.com/SRombauts/SQLiteCpp" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/SQLiteCpp/include" "" "SQLiteCpp" "" "")
@@ -173,11 +190,11 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     
 endif()
 
-provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
-    "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
+# provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
+#     "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
 
-provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute" "https://github.com/KomputeProject/kompute.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute/src/include" 
-    "" "kompute" "BUILD_TESTING=OFF;KP_BUILD_PYTHON=OFF;KP_BUILD_BENCHMARKS=OFF;KP_BUILD_EXAMPLES=OFF" "")
+# provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute" "https://github.com/KomputeProject/kompute.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute/src/include" 
+#     "" "kompute" "BUILD_TESTING=OFF;KP_BUILD_PYTHON=OFF;KP_BUILD_BENCHMARKS=OFF;KP_BUILD_EXAMPLES=OFF" "")
 
 # -------------------------------------------------------
 # Embedding Includes
@@ -199,29 +216,29 @@ endif()
 # Steam über name als prebuildLib einginden
 includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
 
-# -------------------------------------------------------
-# LLVM
-# -------------------------------------------------------
+# # -------------------------------------------------------
+# # LLVM
+# # -------------------------------------------------------
 
-# Bereitstellung auch über provideLib oder FetchContent möglich benötigt aber lange Buildzeiten
-# und viel Speicherplatz
+# # Bereitstellung auch über provideLib oder FetchContent möglich benötigt aber lange Buildzeiten
+# # und viel Speicherplatz
 
-find_package(LLVM REQUIRED CONFIG)
+# find_package(LLVM REQUIRED CONFIG)
 
-list(APPEND INCLUDES "${LLVM_INCLUDE_DIRS}")
+# list(APPEND INCLUDES "${LLVM_INCLUDE_DIRS}")
 
-separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
-add_definitions(${LLVM_DEFINITIONS_LIST})
+# separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+# add_definitions(${LLVM_DEFINITIONS_LIST})
 
-llvm_map_components_to_libnames(LLVM_LIBS
-    core
-    orcjit
-    native
-    passes
-    irreader
-)
+# llvm_map_components_to_libnames(LLVM_LIBS
+#     core
+#     orcjit
+#     native
+#     passes
+#     irreader
+# )
 
-list(APPEND LINKLIBS "${LLVM_LIBS}")
+# list(APPEND LINKLIBS "${LLVM_LIBS}")
 
 # -------------------------------------------------------
 # Testing
@@ -342,6 +359,16 @@ foreach(proc_src IN LISTS PROC_SOURCES)
 
         COMMAND ${CMAKE_COMMAND} -E echo "480" > $<TARGET_FILE_DIR:${proc_name}>/steam_appid.txt
         COMMENT "Generating SteamAppId.txt"
+    )
+
+    # Nach add_subdirectory(rbfx)
+    add_custom_command(TARGET ${proc_name} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/CoreData
+            $<TARGET_FILE_DIR:${proc_name}>/CoreData
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/Data
+            $<TARGET_FILE_DIR:${proc_name}>/Data
     )
 
     if(USE_ANGLE)

@@ -1,89 +1,35 @@
-#include <raylib.h>
+#include <Urho3D/Engine/Application.h>
+#include <Urho3D/Engine/EngineDefs.h>
+#include <Urho3D/Core/Context.h>
+
 #include <steam/steam_api.h>
 
-int main(int argc, char *argv[])
+using namespace Urho3D;
+
+class HelloWorld : public Application
 {
-    // Initialises the SteamAPI, wich is automatically detecting the Game Window and handling it
-    bool g_steamAPI_Activated = SteamAPI_Init();
+    URHO3D_OBJECT(HelloWorld, Application);
 
-    // Initialization
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+public:
 
-    SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIDDEN | FLAG_WINDOW_TOPMOST | FLAG_WINDOW_RESIZABLE);
+    HelloWorld(Context* context) : Application(context) {}
 
-    InitWindow(screenWidth, screenHeight, "raylib [models] example - loading gltf");
-
-    // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = { 6.0f, 6.0f, 6.0f };         // Camera position
-    camera.target = { 0.0f, 2.0f, 0.0f };           // Camera looking at point
-    camera.up = { 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
-    camera.fovy = 45.0f;                            // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
-
-    // Load model
-    Model model = LoadModel("../../Recc/assets/Stag.gltf");
-    Vector3 position = { 0.0f, 0.0f, 0.0f };        // Set model world position
-
-    // Load model animations
-    int animCount = 0;
-    ModelAnimation *anims = LoadModelAnimations("../../Recc/assets/Stag.gltf", &animCount);
-
-    // Animation playing variables
-    unsigned int animIndex = 0;                     // Current animation playing
-    float animCurrentFrame = 0;                     // Current animation frame
-
-    // SetTargetFPS(60);                               // Set our game to run at 60 frames-per-second
-
-    // 
-    if(IsWindowState(FLAG_WINDOW_HIDDEN)){ ClearWindowState(FLAG_WINDOW_HIDDEN); }
-
-    // Main game loop
-    while (!WindowShouldClose())                    // Detect window close button or ESC key
+    void Start() override
     {
-        // Update
-        UpdateCamera(&camera, CAMERA_ORBITAL);
-
-        // Select current animation
-        if (IsKeyPressed(KEY_RIGHT)) animIndex = (animIndex + 1)%animCount;
-        else if (IsKeyPressed(KEY_LEFT)) animIndex = (animIndex + animCount - 1)%animCount;
-
-        // Update model animation
-        static float animSpeed = 60;
-        animCurrentFrame += GetFrameTime() * animSpeed;
-
-        while(animCurrentFrame > anims[animIndex].keyframeCount){ animCurrentFrame -= anims[animIndex].keyframeCount; }
-
-        UpdateModelAnimation(model, anims[animIndex], animCurrentFrame);
-
-        // Draw
-        BeginDrawing();
-
-            ClearBackground(RAYWHITE);
-
-            BeginMode3D(camera);
-
-                DrawModel(model, position, 1.0f, WHITE);
-
-                DrawGrid(10, 1.0f);
-
-            EndMode3D();
-
-            DrawText(TextFormat("Current animation: %s", anims[animIndex].name), 10, 40, 20, MAROON);
-            DrawText("Use the LEFT/RIGHT keys to switch animation", 10, 10, 20, GRAY);
-
-        EndDrawing();
+        
     }
+};
 
-    // De-Initialization
-    UnloadModelAnimations(anims, animCount);    // Unload model animations data
-    UnloadModel(model);                         // Unload model
+int main(int argc, char** argv)
+{
+    SteamAPI_Init();
 
-    CloseWindow();                              // Close window and OpenGL context
+    Urho3D::ParseArguments(argc, argv);
+    auto context = new Urho3D::Context();
+    auto app = new HelloWorld(context);
+    app->Run();
 
-    // Shutdown SteamAPI if succesfully Initialized
-    if(g_steamAPI_Activated){ SteamAPI_Shutdown(); }
+    SteamAPI_Shutdown();
 
     return 0;
 }
