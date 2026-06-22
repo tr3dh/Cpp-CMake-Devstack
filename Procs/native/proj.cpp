@@ -22,14 +22,14 @@ public:
 
 int main(int argc, char** argv)
 {
-    SteamAPI_Init();
+    // SteamAPI_Init();
 
-    Urho3D::ParseArguments(argc, argv);
-    auto context = new Urho3D::Context();
-    auto app = new HelloWorld(context);
-    app->Run();
+    // Urho3D::ParseArguments(argc, argv);
+    // auto context = new Urho3D::Context();
+    // auto app = new HelloWorld(context);
+    // app->Run();
 
-    SteamAPI_Shutdown();
+    // SteamAPI_Shutdown();
 
     return 0;
 }

@@ -135,6 +135,28 @@ provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/fast-wcf" "https://github.com
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/Alberich" "https://github.com/tr3dh/Alberich.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/Alberich/src" "" "alberich" "" "")
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/pybind11" "https://github.com/pybind/pybind11" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/pybind11/include" "" "pybind11::embed" "" "")
 
+# Die Einbettung von Julia erfordert das Hinterlegen einer Julia-Runtime unter 'thirdParty/julia'
+
+# Julia
+set(JULIA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/julia")
+
+if(EXISTS "${JULIA_ROOT}")
+
+    add_library(julia SHARED IMPORTED)
+    set_target_properties(julia PROPERTIES IMPORTED_IMPLIB "${JULIA_ROOT}/lib/libjulia.dll.a" IMPORTED_LOCATION "${JULIA_ROOT}/bin/libjulia.dll")
+    target_include_directories(julia INTERFACE "${JULIA_ROOT}/include" "${JULIA_ROOT}/include/julia")
+    set_property(TARGET julia APPEND PROPERTY INTERFACE_VS_DEBUGGER_ENVIRONMENT "PATH=${JULIA_ROOT}/bin;%PATH%")
+
+    list(APPEND LINKLIBS julia)
+
+    # Julia-Installation in den Build-Ordner kopieren
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/julia/lib/julia" DESTINATION "${CMAKE_BINARY_DIR}")
+
+    # Julia-Installation in den Build-Ordner kopieren
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/julia/bin/" DESTINATION "${CMAKE_BINARY_DIR}")
+
+endif()
+
 # nlohmann::json
 provideHeaderOnlyLib("thirdParty/json" "https://github.com/nlohmann/json.git" "thirdParty/json/include" "" "")
 
