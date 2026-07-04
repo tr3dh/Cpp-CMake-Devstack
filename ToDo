@@ -1,0 +1,18 @@
+Dynamische Enums weiter implementieren (StringIDEnum)
+und dann bei contains abfrage (enum contains member) mit enumid abgleich und dann abfrage ob member id in enum id range
+
+Denkvorgänge nachprogrammieren mit
+
+- Bedürfnisse
+- Kurzzeit wissen
+- Langzeitwissen
+- Sympathien
+
+>> richtige "Denk"-struktur 
+
+>> oder eine art multidimensionale boids wo boids gedanken sind die zb unterschiedliche masse ja nach gewicht des bedürfnisses haben
+
+# UNIGINE einbetten (kommerziell aber komplett als lib nutzbar)
+
+
+https://generalistprogrammer.com/procedural-generation-games
