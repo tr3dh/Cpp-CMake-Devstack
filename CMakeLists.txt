@@ -85,10 +85,15 @@ else()
 
 endif()
 
+# Einkommentieren für rbfx
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 #
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx" "https://github.com/rbfx/rbfx"
             "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx/Source"
             "" "Urho3D" "URHO3D_VULKAN=1;RBFX_SKIP_INSTALL=ON;URHO3D_SAMPLES=ON" "")
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Imgui + verwendete Extensions
 getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/imgui" "https://github.com/ocornut/imgui" "")
@@ -162,6 +167,12 @@ provideHeaderOnlyLib("thirdParty/json" "https://github.com/nlohmann/json.git" "t
 
 # entt (ECS)
 provideHeaderOnlyLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt" "https://github.com/skypjack/entt" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/entt/single_include/" "" "")
+
+# flecs (ECS)
+provideLib(
+    "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/flecs" "https://github.com/SanderMertens/flecs.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/flecs/include" "" "flecs::flecs_static"
+    "FLECS_STATIC=ON;FLECS_SHARED=OFF;FLECS_TESTS=OFF;FLECS_BENCHMARK=OFF;FLECS_DOCS=OFF" "v4.0.3"
+)
 
 # # spdlog für verbessertes Logging
 # provideLib("thirdParty/spdlog" "https://github.com/gabime/spdlog" "thirdParty/spdlog/src" "" "spdlog" "" "")
@@ -383,6 +394,9 @@ foreach(proc_src IN LISTS PROC_SOURCES)
         COMMENT "Generating SteamAppId.txt"
     )
 
+    # Einkommentieren für rbfx
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     # Nach add_subdirectory(rbfx)
     add_custom_command(TARGET ${proc_name} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -392,6 +406,8 @@ foreach(proc_src IN LISTS PROC_SOURCES)
             ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/Data
             $<TARGET_FILE_DIR:${proc_name}>/Data
     )
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if(USE_ANGLE)
 
