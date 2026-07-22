@@ -30,7 +30,7 @@ configDocs:
 		r'(PROJECT_NAME\s*=).*':      r'\1 "$(PROJECT_NAME)"',
 		r'(PROJECT_LOGO\s*=).*':      r'\1 $(PROJECT_LOGO)',
 		r'(PROJECT_ICON\s*=).*':      r'\1 $(PROJECT_ICON)',
-		r'(INPUT\s*=).*':             r'\1 $(INPUT) README.md',
+		r'(INPUT\s*=).*':             r'\1 $(INPUT) README.md docs/pages',
 		r'(PROJECT_LOGO\s*=).*':             r'\1 $(PROJECT_LOGO)',
 		r'(PROJECT_ICON\s*=).*':             r'\1 $(PROJECT_ICON)',
 		r'(GENERATE_TREEVIEW\s*=).*':     r'\1 YES',
@@ -50,6 +50,8 @@ configDocs:
 		r'(EXTRACT_LOCAL_VARS\s*=).*':                  r'\1 YES',
 		r'(JAVADOC_AUTOBRIEF\s*=).*':                  r'\1 YES',
 		r'(RECURSIVE\s*=).*':                  r'\1 YES',
+		r'(FILE_PATTERNS\s*=).*':                  r'\1 *.h *.cpp *.md',
+		r'(USE_MATHJAX\s*=).*':                  r'\1 YES',
 	}
 
 	for pattern, replacement in replacements.items(): text = re.sub(pattern, replacement, text)
