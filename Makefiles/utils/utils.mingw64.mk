@@ -15,6 +15,9 @@ OUTPUT ?= docs/doku/$(PROJECT_NAME)
 PROJECT_LOGO ?= Recc/Compilation/icon.png
 PROJECT_ICON ?= Recc/Compilation/icon.png
 
+# Doxygen Config über `pacman -S mingw-w64-x86_64-doxygen`
+# graphviz Deps (für Doxy-DepGraphs) über `pacman -S mingw-w64-x86_64-graphviz`
+
 configDocs:
 	@mkdir -p $(DOXYDIR)
 	@doxygen -g $(DOXYFILE)
@@ -55,18 +58,18 @@ configDocs:
 		r'(SHOW_NAMESPACES\s*=).*':        	r'\1 YES',
 		r'(OPTIMIZE_OUTPUT_FOR_C\s*=).*':  	r'\1 YES',
 		r'(HIDE_UNDOC_MEMBERS\s*=).*':   	r'\1 NO',
-		r'(INLINE_SIMPLE_STRUCTS\s*=).*': 	r'\1 NO',
+#		r'(INLINE_SIMPLE_STRUCTS\s*=).*': 	r'\1 NO',
 		r'(ALPHABETICAL_INDEX\s*=).*': 		r'\1 NO',
 
 		r'(DISABLE_INDEX\s*=).*': 			r'\1 NO',
-		r'(FULL_SIDEBAR\s*=).*': 			r'\1 NO',
+#		r'(FULL_SIDEBAR\s*=).*': 			r'\1 NO',
 
 		r'(USE_MDFILE_AS_MAINPAGE\s*=).*': 	r'\1 README.md',
 		r'(USE_MATHJAX\s*=).*':             r'\1 YES',
 		r'(JAVADOC_AUTOBRIEF\s*=).*':       r'\1 YES',
 		
 # Doxygen Awesome
-		r'(HTML_EXTRA_STYLESHEET\s*=).*':	r'\1 thirdParty/doxygen-awesome-css/doxygen-awesome.css thirdParty/doxygen-awesome-css/doxygen-awesome-sidebar-only.css',
+		r'(HTML_EXTRA_STYLESHEET\s*=).*':	r'\1 thirdParty/doxygen-awesome-css/doxygen-awesome.css',
 		r'(HTML_COLORSTYLE\s*=).*': 		r'\1 TOGGLE',
 		
 	}
