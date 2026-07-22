@@ -231,6 +231,12 @@ provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/googletest" "https://github.c
     "" "")
 
 # -------------------------------------------------------
+# Docs
+# -------------------------------------------------------
+
+getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/doxygen-awesome-css" "https://github.com/jothepro/doxygen-awesome-css.git" "")
+
+# -------------------------------------------------------
 # Source Code
 # -------------------------------------------------------
 

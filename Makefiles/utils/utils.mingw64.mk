@@ -26,32 +26,49 @@ configDocs:
 	text = path.read_text(encoding="utf-8")
 
 	replacements = {
-		r'(OUTPUT_DIRECTORY\s*=).*':  r'\1 $(OUTPUT)',
-		r'(PROJECT_NAME\s*=).*':      r'\1 "$(PROJECT_NAME)"',
-		r'(PROJECT_LOGO\s*=).*':      r'\1 $(PROJECT_LOGO)',
-		r'(PROJECT_ICON\s*=).*':      r'\1 $(PROJECT_ICON)',
-		r'(INPUT\s*=).*':             r'\1 $(INPUT) README.md docs/pages',
-		r'(PROJECT_LOGO\s*=).*':             r'\1 $(PROJECT_LOGO)',
-		r'(PROJECT_ICON\s*=).*':             r'\1 $(PROJECT_ICON)',
-		r'(GENERATE_TREEVIEW\s*=).*':     r'\1 YES',
-		r'(EXTRACT_ALL\s*=).*':           r'\1 YES',
-		r'(HAVE_DOT\s*=).*':              r'\1 YES',
-		r'(CALL_GRAPH\s*=).*':            r'\1 YES',
-		r'(CALLER_GRAPH\s*=).*':          r'\1 YES',
-		r'(SHOW_NAMESPACES\s*=).*':        r'\1 YES',
-		r'(OPTIMIZE_OUTPUT_FOR_C\s*=).*':  r'\1 YES',
-		r'(EXTRACT_PRIVATE\s*=).*':      r'\1 YES',
-		r'(EXTRACT_STATIC\s*=).*':       r'\1 YES',
-		r'(EXTRACT_LOCAL_METHODS\s*=).*': r'\1 YES',
-		r'(HIDE_UNDOC_MEMBERS\s*=).*':   r'\1 NO',
-		r'(INLINE_SIMPLE_STRUCTS\s*=).*': r'\1 NO',
-		r'(ALPHABETICAL_INDEX\s*=).*': r'\1 NO',
-		r'(USE_MDFILE_AS_MAINPAGE\s*=).*': r'\1 README.md',
-		r'(EXTRACT_LOCAL_VARS\s*=).*':                  r'\1 YES',
-		r'(JAVADOC_AUTOBRIEF\s*=).*':                  r'\1 YES',
-		r'(RECURSIVE\s*=).*':                  r'\1 YES',
-		r'(FILE_PATTERNS\s*=).*':                  r'\1 *.h *.cpp *.md',
-		r'(USE_MATHJAX\s*=).*':                  r'\1 YES',
+		r'(OUTPUT_DIRECTORY\s*=).*':  		r'\1 $(OUTPUT)',
+		r'(PROJECT_NAME\s*=).*':      		r'\1 "$(PROJECT_NAME)"',
+		r'(PROJECT_LOGO\s*=).*':      		r'\1 $(PROJECT_LOGO)',
+		r'(PROJECT_ICON\s*=).*':      		r'\1 $(PROJECT_ICON)',
+
+		r'(INPUT\s*=).*':             		r'\1 $(INPUT) README.md docs/pages',
+		r'(RECURSIVE\s*=).*':         		r'\1 YES',
+		r'(FILE_PATTERNS\s*=).*':     		r'\1 *.h *.cpp *.md',
+
+		r'(GENERATE_TREEVIEW\s*=).*':     	r'\1 YES',
+		r'(EXTRACT_ALL\s*=).*':           	r'\1 YES',
+		r'(EXTRACT_PRIVATE\s*=).*':        	r'\1 YES',
+		r'(EXTRACT_STATIC\s*=).*':         	r'\1 YES',
+		r'(EXTRACT_LOCAL_METHODS\s*=).*':  	r'\1 YES',
+		r'(EXTRACT_LOCAL_VARS\s*=).*':     	r'\1 YES',
+
+		r'(HAVE_DOT\s*=).*':              	r'\1 YES',
+		r'(CLASS_GRAPH\s*=).*':           	r'\1 YES',
+		r'(COLLABORATION_GRAPH\s*=).*':  	r'\1 YES',
+		r'(INCLUDE_GRAPH\s*=).*':         	r'\1 YES',
+		r'(INCLUDED_BY_GRAPH\s*=).*':     	r'\1 YES',
+		r'(CALL_GRAPH\s*=).*':            	r'\1 YES',
+		r'(CALLER_GRAPH\s*=).*':          	r'\1 YES',
+		r'(GROUP_GRAPHS\s*=).*':          	r'\1 YES',
+		r'(GRAPHICAL_HIERARCHY\s*=).*':   	r'\1 YES',
+
+		r'(SHOW_NAMESPACES\s*=).*':        	r'\1 YES',
+		r'(OPTIMIZE_OUTPUT_FOR_C\s*=).*':  	r'\1 YES',
+		r'(HIDE_UNDOC_MEMBERS\s*=).*':   	r'\1 NO',
+		r'(INLINE_SIMPLE_STRUCTS\s*=).*': 	r'\1 NO',
+		r'(ALPHABETICAL_INDEX\s*=).*': 		r'\1 NO',
+
+		r'(DISABLE_INDEX\s*=).*': 			r'\1 NO',
+		r'(FULL_SIDEBAR\s*=).*': 			r'\1 NO',
+
+		r'(USE_MDFILE_AS_MAINPAGE\s*=).*': 	r'\1 README.md',
+		r'(USE_MATHJAX\s*=).*':             r'\1 YES',
+		r'(JAVADOC_AUTOBRIEF\s*=).*':       r'\1 YES',
+		
+# Doxygen Awesome
+		r'(HTML_EXTRA_STYLESHEET\s*=).*':	r'\1 thirdParty/doxygen-awesome-css/doxygen-awesome.css thirdParty/doxygen-awesome-css/doxygen-awesome-sidebar-only.css',
+		r'(HTML_COLORSTYLE\s*=).*': 		r'\1 TOGGLE',
+		
 	}
 
 	for pattern, replacement in replacements.items(): text = re.sub(pattern, replacement, text)
@@ -60,8 +77,8 @@ configDocs:
 	PY
 
 clearDocs:
-	rm $(DOXYFILE)
-	rm $(DOXYFILE).bak
+	rm -f $(DOXYFILE)
+	rm -f $(DOXYFILE).bak
 
 buildDocs:
 	@mkdir -p $(OUTPUT)
@@ -70,6 +87,8 @@ buildDocs:
 displayDocs:
 	@echo off
 	start "" docs/index.html
+
+docs: clearDocs configDocs buildDocs displayDocs
 
 genltex:
 	cd docs/doku/$(PROJECT_NAME)/latex && make
