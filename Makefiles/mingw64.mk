@@ -57,3 +57,10 @@ rexec:
 	$(MAKE) exec BUILDDIR=$(BUILDDIR_RELEASE) BUILDMODE=Release
 
 rlaunch: rbuild rexec
+
+MPI_THREADS?=12
+
+mpirun:
+	/c/Program\ Files/Microsoft\ MPI/Bin/mpiexec.exe -n 12 ./$(BUILDDIR)/proj
+
+mpilaunch: build mpirun

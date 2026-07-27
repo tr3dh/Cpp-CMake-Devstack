@@ -43,8 +43,8 @@ set(THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty")
 # Eigen führt dabei keinen check aus ob das target schon existiert,
 # Die rebelfork abhängigkeit schon. Deshalb wird zuerst Eigen hinzugefügt, um Konflikte zu vermeiden 
 
-provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
-    "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
+# provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
+#     "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
 
 # -------------------------------------------------------
 # Rendering Includes
@@ -88,10 +88,10 @@ endif()
 # Einkommentieren für rbfx
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#
-provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx" "https://github.com/rbfx/rbfx"
-            "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx/Source"
-            "" "Urho3D" "URHO3D_VULKAN=1;RBFX_SKIP_INSTALL=ON;URHO3D_SAMPLES=ON" "")
+# #
+# provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx" "https://github.com/rbfx/rbfx"
+#             "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/rbfx/Source"
+#             "" "Urho3D" "URHO3D_VULKAN=1;RBFX_SKIP_INSTALL=ON;URHO3D_SAMPLES=ON" "")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -195,12 +195,12 @@ provideLib("thirdParty/enet" "https://github.com/lsalzman/enet.git" "thirdParty/
 # Physics Includes
 # -------------------------------------------------------
 
-# Jolt Physics für Physics Sims, Raycasting, Collisions, etc.
-getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics" "https://github.com/jrouwe/JoltPhysics.git" "")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics/Build")
+# # Jolt Physics für Physics Sims, Raycasting, Collisions, etc.
+# getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics" "https://github.com/jrouwe/JoltPhysics.git" "")
+# add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics/Build")
 
-list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics")
-list(APPEND LINKLIBS "Jolt")
+# list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics")
+# list(APPEND LINKLIBS "Jolt")
 
 # -------------------------------------------------------
 # Maths Includes
@@ -223,11 +223,45 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     
 endif()
 
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute" "https://github.com/KomputeProject/kompute.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute/src/include" 
+    "" "kompute" "BUILD_TESTING=OFF;KP_BUILD_PYTHON=OFF;KP_BUILD_BENCHMARKS=OFF;KP_BUILD_EXAMPLES=OFF" "")
+
+# -------------------------------------------------------
+# Numerische Includes
+# -------------------------------------------------------
+
+# Petsc
+
+set(PETSC_DIR "thirdParty/petsc" CACHE STRING "" FORCE)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+    list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/petsc/arch-mswin-c-debug/include")
+    set(PETSC_ARCH "arch-mswin-c-debug" CACHE STRING "" FORCE)
+else()
+
+    list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/petsc/arch-mswin-c-opt/include")
+    set(PETSC_ARCH "arch-mswin-c-opt" CACHE STRING "" FORCE)
+endif()
+
+list(APPEND CMAKE_PREFIX_PATH
+    "${PETSC_DIR}/${PETSC_ARCH}"
+)
+
+# MFEM
+
+provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/mfem" "https://github.com/mfem/mfem"
+            "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty;${mfem_BINARY_DIR}/config" "" "mfem"
+            "MFEM_USE_MPI=ON;MMFEM_USE_METIS=ON" "tags/v4.9")
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Diesen Eigen Include aufgrund kollidierender Targets rausnehmen
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
 #     "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
 
-# provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute" "https://github.com/KomputeProject/kompute.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute/src/include" 
-#     "" "kompute" "BUILD_TESTING=OFF;KP_BUILD_PYTHON=OFF;KP_BUILD_BENCHMARKS=OFF;KP_BUILD_EXAMPLES=OFF" "")
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # -------------------------------------------------------
 # Embedding Includes
@@ -252,9 +286,6 @@ includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" 
 # # -------------------------------------------------------
 # # LLVM
 # # -------------------------------------------------------
-
-# # Bereitstellung auch über provideLib oder FetchContent möglich benötigt aber lange Buildzeiten
-# # und viel Speicherplatz
 
 # find_package(LLVM REQUIRED CONFIG)
 
@@ -397,15 +428,15 @@ foreach(proc_src IN LISTS PROC_SOURCES)
     # Einkommentieren für rbfx
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    # Nach add_subdirectory(rbfx)
-    add_custom_command(TARGET ${proc_name} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/CoreData
-            $<TARGET_FILE_DIR:${proc_name}>/CoreData
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/Data
-            $<TARGET_FILE_DIR:${proc_name}>/Data
-    )
+    # # Nach add_subdirectory(rbfx)
+    # add_custom_command(TARGET ${proc_name} POST_BUILD
+    #     COMMAND ${CMAKE_COMMAND} -E copy_directory
+    #         ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/CoreData
+    #         $<TARGET_FILE_DIR:${proc_name}>/CoreData
+    #     COMMAND ${CMAKE_COMMAND} -E copy_directory
+    #         ${CMAKE_SOURCE_DIR}/thirdParty/rbfx/bin/Data
+    #         $<TARGET_FILE_DIR:${proc_name}>/Data
+    # )
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

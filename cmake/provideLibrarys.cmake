@@ -149,16 +149,23 @@ function(getLib targetDir repoUrl gitTag)
         execute_process(
 
             COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetDir}
+            WORKING_DIRECTORY ${targetDir}
             RESULT_VARIABLE git_result
         )
 
         #
         if(NOT gitTag STREQUAL "")
+            
+            # Tags explizit laden
+            execute_process(
+                COMMAND ${GIT_EXECUTABLE} fetch --tags
+                WORKING_DIRECTORY ${targetDir}
+                RESULT_VARIABLE git_fetch_result
+            )
 
             execute_process(
                 COMMAND ${GIT_EXECUTABLE} checkout ${gitTag}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetDir}
+                WORKING_DIRECTORY ${targetDir}
                 RESULT_VARIABLE git_result
             )
             if(NOT git_result EQUAL "0")
@@ -167,6 +174,7 @@ function(getLib targetDir repoUrl gitTag)
             
             message(STATUS "Checked out tag ${gitTag}")
         endif()
+
     else()
 
         message(STATUS "Repository ${targetDir} exists")
@@ -182,7 +190,7 @@ function(getModule targetDir repoUrl gitTag)
         find_package(Git REQUIRED)
         message(STATUS "Cloning ${repoUrl} into ${targetDir}")
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} clone --progress ${repoUrl} ${targetDir}
+            COMMAND ${GIT_EXECUTABLE} clone --recursive --progress ${repoUrl} ${targetDir}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             RESULT_VARIABLE git_result
         )
@@ -193,27 +201,32 @@ function(getModule targetDir repoUrl gitTag)
         execute_process(
 
             COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetDir}
+            WORKING_DIRECTORY ${targetDir}
             RESULT_VARIABLE git_result
         )
 
         #
         if(NOT gitTag STREQUAL "")
+            
+            # Tags explizit laden
+            execute_process(
+                COMMAND ${GIT_EXECUTABLE} fetch --tags
+                WORKING_DIRECTORY ${targetDir}
+                RESULT_VARIABLE git_fetch_result
+            )
 
             execute_process(
                 COMMAND ${GIT_EXECUTABLE} checkout ${gitTag}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetDir}
+                WORKING_DIRECTORY ${targetDir}
                 RESULT_VARIABLE git_result
             )
+
             if(NOT git_result EQUAL "0")
                 message(FATAL_ERROR "Failed to checkout tag ${gitTag}")
             endif()
             
             message(STATUS "Checked out tag ${gitTag}")
         endif()
-    else()
-
-        message(STATUS "Repository ${targetDir} exists")
     endif()
 
 endfunction()

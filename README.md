@@ -87,7 +87,9 @@ The complete license texts, as well as the GMP source code and GMP relink instru
 | LLVM | Apache-2.0 | [llvm/llvm-project](https://github.com/llvm/llvm-project.git) |
 | rbfx | MIT | [rbfx/rbfx](https://github.com/rbfx/rbfx) |
 | Julia | MIT | [JuliaLang/julia](https://github.com/JuliaLang/julia) |
-| Flecs | MIT | [SanderMertens/flecs](https://github.com/SanderMertens/flecs)
+| Flecs | MIT | [SanderMertens/flecs](https://github.com/SanderMertens/flecs) |
+| petsc | custom | [petsc/petsc](https://gitlab.com/petsc/petsc) |
+| mfem | BSD-3-Clause | [mfem/mfem](https://github.com/mfem/mfem)|
 
 # Used Assets
 
