@@ -145,12 +145,12 @@ provideLib("thirdParty/enet" "https://github.com/lsalzman/enet.git" "thirdParty/
 # Physics Includes
 # -------------------------------------------------------
 
-# Jolt Physics für Physics Sims, Raycasting, Collisions, etc.
-getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics" "https://github.com/jrouwe/JoltPhysics.git" "")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics/Build")
+# # Jolt Physics für Physics Sims, Raycasting, Collisions, etc.
+# getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics" "https://github.com/jrouwe/JoltPhysics.git" "")
+# add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics/Build")
 
-list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics")
-list(APPEND LINKLIBS "Jolt")
+# list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/JoltPhysics")
+# list(APPEND LINKLIBS "Jolt")
 
 # -------------------------------------------------------
 # Maths Includes
@@ -196,8 +196,8 @@ if(WIN32)
 
 endif()
 
-# Steam über name als prebuildLib einginden
-includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
+# # Steam über name als prebuildLib einginden
+# includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
 
 # -------------------------------------------------------
 # LLVM
@@ -229,6 +229,12 @@ list(APPEND LINKLIBS "${LLVM_LIBS}")
 
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/googletest" "https://github.com/google/googletest" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/googletest/include" "" ""
     "" "")
+
+# -------------------------------------------------------
+# Docs
+# -------------------------------------------------------
+
+getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/doxygen-awesome-css" "https://github.com/jothepro/doxygen-awesome-css.git" "")
 
 # -------------------------------------------------------
 # Source Code
@@ -329,13 +335,13 @@ foreach(proc_src IN LISTS PROC_SOURCES)
     #
     target_link_libraries(${proc_name} PUBLIC srclib)
 
-    # Kopiert Steam DLL
-    add_custom_command(TARGET ${proc_name} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_DLL_NAME}"
-            $<TARGET_FILE_DIR:${proc_name}>
-        COMMENT "Copying DLLS"
-    )
+    # # Kopiert Steam DLL
+    # add_custom_command(TARGET ${proc_name} POST_BUILD
+    #     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    #         "${CMAKE_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_DLL_NAME}"
+    #         $<TARGET_FILE_DIR:${proc_name}>
+    #     COMMENT "Copying DLLS"
+    # )
 
     # Legt steam_appid file an damit Steam API default ID findet und Start nicht terminiert
     add_custom_command(TARGET ${proc_name} POST_BUILD

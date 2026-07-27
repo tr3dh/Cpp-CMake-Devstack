@@ -1,10 +1,10 @@
 #include <raylib.h>
-#include <steam/steam_api.h>
+// #include <steam/steam_api.h>
 
 int main(int argc, char *argv[])
 {
     // Initialises the SteamAPI, wich is automatically detecting the Game Window and handling it
-    bool g_steamAPI_Activated = SteamAPI_Init();
+    // bool g_steamAPI_Activated = SteamAPI_Init();
 
     // Initialization
     const int screenWidth = 800;
@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
 
     CloseWindow();                              // Close window and OpenGL context
 
-    // Shutdown SteamAPI if succesfully Initialized
-    if(g_steamAPI_Activated){ SteamAPI_Shutdown(); }
+    // // Shutdown SteamAPI if succesfully Initialized
+    // if(g_steamAPI_Activated){ SteamAPI_Shutdown(); }
 
     return 0;
 }
