@@ -9,57 +9,52 @@
 #           mingw-w64-x86_64-tbb \
 #           mingw-w64-x86_64-muparser \
 #           mingw-w64-x86_64-zlib \
-#           mingw-w64-x86_64-petsc \
-#           mingw-w64-x86_64-build \
-#           mingw-w64-x86_64-mfem \
 #           mingw-w64-x86_64-msmpi \
+#           mingw-w64-x86_64-hypre \
 #           mingw-w64-x86_64-metis \
 #           mingw-w64-x86_64-parmetis \
-#           mingw-w64-x86_64-hypre \
-#           --needed
-
-# pacman -S autoconf \
-#           automake-wrapper \
-#           bison \
-#           bsdcpio \
-#           make \
-#           git \
-#           mingw-w64-x86_64-toolchain \
-#           patch \
-#           python \
-#           flex \
-#           pkg-config \
-#           pkgfile \
-#           tar \
-#           unzip \
-#           mingw-w64-x86_64-cmake \
-#           mingw-w64-x86_64-msmpi \ 
-#           mingw-w64-x86_64-openblas \
 #           --needed
 
 ROOT=$(pwd)
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
 
 PETSC_VERSION=v3.21.0
 PETSC_DIR=$ROOT/thirdParty/petsc
 
-# Clone PETSc
-git clone -b $PETSC_VERSION https://gitlab.com/petsc/petsc.git $PETSC_DIR
+if [ ! -d "$PETSC_DIR" ]; then
+  git clone -b $PETSC_VERSION https://gitlab.com/petsc/petsc.git $PETSC_DIR
+fi
 
 cd $PETSC_DIR
 
+rm -rf arch-mswin-c-debug
+
+# ============================================================
 # Für Debug
+# ============================================================
 
 /usr/bin/python ./configure \
   --with-mpi-dir=/mingw64 \
   --with-blaslapack-dir=/mingw64 \
   --with-shared-libraries=0 \
   --with-fc=0 \
-  --with-64-bit-indices=1 \
+  --with-hypre-include=/mingw64/include \
+  --with-hypre-lib=/mingw64/lib/libHYPRE.dll.a \
+  --with-metis-include=/mingw64/include \
+  --with-metis-lib=/mingw64/lib/libmetis.dll.a \
+  --with-parmetis-include=/mingw64/include \
+  --with-parmetis-lib=/mingw64/lib/libparmetis.dll.a \
+  COPTFLAGS="-O0 -g" \
+  CXXOPTFLAGS="-O0 -g" \
   PETSC_ARCH=arch-mswin-c-debug
 
 make PETSC_DIR=$PETSC_DIR PETSC_ARCH=arch-mswin-c-debug all
 
+# ============================================================
 # Für Release
+# ============================================================
+
+rm -rf arch-mswin-c-opt
 
 /usr/bin/python ./configure \
   --with-mpi-dir=/mingw64 \
@@ -67,9 +62,14 @@ make PETSC_DIR=$PETSC_DIR PETSC_ARCH=arch-mswin-c-debug all
   --with-shared-libraries=0 \
   --with-fc=0 \
   --with-debugging=0 \
-  --with-64-bit-indices \
-  COPTFLAGS="-O3 -march=native" \
-  CXXOPTFLAGS="-O3 -march=native" \
+  --with-hypre-include=/mingw64/include \
+  --with-hypre-lib=/mingw64/lib/libHYPRE.dll.a \
+  --with-metis-include=/mingw64/include \
+  --with-metis-lib=/mingw64/lib/libmetis.dll.a \
+  --with-parmetis-include=/mingw64/include \
+  --with-parmetis-lib=/mingw64/lib/libparmetis.dll.a \
+  COPTFLAGS="-O3 -march=native -funroll-loops" \
+  CXXOPTFLAGS="-O3 -march=native -funroll-loops" \
   PETSC_ARCH=arch-mswin-c-opt
 
 make PETSC_DIR=$PETSC_DIR PETSC_ARCH=arch-mswin-c-opt all

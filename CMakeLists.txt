@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 project(Proj LANGUAGES C CXX)
 
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+set(CMAKE_SKIP_INSTALL_RULES TRUE)
 
 set(BUILD_SHARED_LIBS OFF)
 
@@ -28,6 +29,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(INCLUDES "")
 set(CPPOBJS "")
 set(LINKLIBS "")
+set(DLLS "")
 
 # Erstellt Ordner wenn nicht vorhanden
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty")
@@ -232,7 +234,7 @@ provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute" "https://github.com/
 
 # Petsc
 
-set(PETSC_DIR "thirdParty/petsc" CACHE STRING "" FORCE)
+set(PETSC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/petsc" CACHE STRING "" FORCE)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
@@ -252,7 +254,12 @@ list(APPEND CMAKE_PREFIX_PATH
 
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/mfem" "https://github.com/mfem/mfem"
             "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty;${mfem_BINARY_DIR}/config" "" "mfem"
-            "MFEM_USE_MPI=ON;MMFEM_USE_METIS=ON" "tags/v4.9")
+            "MFEM_USE_MPI=ON;MFEM_USE_METIS=ON;MFEM_USE_METIS_5=ON;MFEM_USE_PETSC=ON;\
+HYPRE_DIR=${PETSC_DIR}/${PETSC_ARCH};\
+METIS_DIR=${PETSC_DIR}/${PETSC_ARCH};\
+PETSC_DIR=${PETSC_DIR};\
+PETSC_ARCH=${PETSC_ARCH}"
+            "tags/v4.9")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Diesen Eigen Include aufgrund kollidierender Targets rausnehmen
@@ -342,8 +349,43 @@ target_compile_options(srclib PUBLIC
 
 # target_link_options(srclib PUBLIC -Wl,--allow-multiple-definition)
 
-target_link_libraries(srclib PUBLIC -static ${LINKLIBS})
+target_link_libraries(srclib PUBLIC ${LINKLIBS})
 target_include_directories(srclib PUBLIC ${INCLUDES})
+
+get_filename_component(MINGW_BIN "${CMAKE_C_COMPILER}" DIRECTORY)
+
+list(APPEND DLLS
+    "${MINGW_BIN}/libgcc_s_seh-1.dll"
+    "${MINGW_BIN}/libstdc++-6.dll"
+    "${MINGW_BIN}/libwinpthread-1.dll"
+    "${MINGW_BIN}/libmetis.dll"
+    "${MINGW_BIN}/libparmetis.dll"
+    "${MINGW_BIN}/libHYPRE.dll"
+    "${MINGW_BIN}/libopenblas.dll"
+    "${MINGW_BIN}/libgfortran-5.dll"
+    "${MINGW_BIN}/libgomp-1.dll"
+    "${MINGW_BIN}/libsuperlu_dist.dll"
+    "${MINGW_BIN}/libquadmath-0.dll"
+    # "${MINGW_BIN}/libgmp-10.dll"
+    # "${MINGW_BIN}/libmpfr-6.dll"
+    # "${MINGW_BIN}/glfw3.dll"
+    # "${MINGW_BIN}/libfreetype-6.dll"
+    # "${MINGW_BIN}/libbrotlidec.dll"
+    # "${MINGW_BIN}/libbrotlicommon.dll"
+    # "${MINGW_BIN}/libbz2-1.dll"
+    # "${MINGW_BIN}/libharfbuzz-0.dll"
+    # "${MINGW_BIN}/libpng16-16.dll"
+    # "${MINGW_BIN}/zlib1.dll"
+    # "${MINGW_BIN}/libglib-2.0-0.dll"
+    # "${MINGW_BIN}/libgraphite2.dll"
+    # "${MINGW_BIN}/libintl-8.dll"
+    # "${MINGW_BIN}/libiconv-2.dll"
+    # "${MINGW_BIN}/libpcre2-8-0.dll"
+    # "${MINGW_BIN}/libLLVM-20.dll"
+    # "${MINGW_BIN}/libxml2-16.dll"
+    # "${MINGW_BIN}/libGLESv2.dll"
+    # "${MINGW_BIN}/libEGL.dll"
+)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
 
@@ -457,6 +499,21 @@ foreach(proc_src IN LISTS PROC_SOURCES)
                 COMMENT "Kopiere ANGLE DLL: ${_dll}")
         endforeach()
     endif()
+
+    # Kopiere DLLS postbuild
+    foreach(_dll IN LISTS DLLS)
+
+        # if(NOT IS_ABSOLUTE "${_dll}")
+
+        #     set(_dll "${ANGLE_LIB_DIR}/${_dll}")
+        # endif()
+        
+        add_custom_command(TARGET ${proc_name} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${_dll}"
+                "$<TARGET_FILE_DIR:${proc_name}>"
+            COMMENT "Kopiere ANGLE DLL: ${_dll}")
+    endforeach()
 
 endforeach()
 
