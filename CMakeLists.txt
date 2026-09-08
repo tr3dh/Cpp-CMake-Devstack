@@ -48,6 +48,9 @@ set(THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty")
 # provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "" "eigen"
 #     "BUILD_TESTING=OFF;EIGEN_BUILD_DOC=OFF;EIGEN_BUILD_PKGCONFIG=OFF" "")
 
+getLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen" "https://github.com/PX4/eigen.git" "")
+list(APPEND INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen")
+
 # -------------------------------------------------------
 # Rendering Includes
 # -------------------------------------------------------
@@ -234,6 +237,15 @@ provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/kompute" "https://github.com/
 
 # Petsc
 
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/petsc")
+else()
+
+    execute_process(
+        COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/DependencieFetch/installPetsc.sh"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+endif()
+
 set(PETSC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/petsc" CACHE STRING "" FORCE)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -255,9 +267,6 @@ list(APPEND CMAKE_PREFIX_PATH
 provideLib("${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/mfem" "https://github.com/mfem/mfem"
             "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty;${mfem_BINARY_DIR}/config" "" "mfem"
             "MFEM_USE_MPI=ON;MFEM_USE_METIS=ON;MFEM_USE_METIS_5=ON;MFEM_USE_PETSC=ON;\
-HYPRE_DIR=${PETSC_DIR}/${PETSC_ARCH};\
-METIS_DIR=${PETSC_DIR}/${PETSC_ARCH};\
-PETSC_DIR=${PETSC_DIR};\
 PETSC_ARCH=${PETSC_ARCH}"
             "tags/v4.9")
 
@@ -287,8 +296,8 @@ if(WIN32)
 
 endif()
 
-# Steam über name als prebuildLib einginden
-includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
+# # Steam über name als prebuildLib einginden
+# includePrebuildLib(steamSkd "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/public" "${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_LIB_NAME}")
 
 # # -------------------------------------------------------
 # # LLVM
@@ -408,6 +417,13 @@ foreach(proc_src IN LISTS PROC_SOURCES)
 
     add_executable(${proc_name} ${proc_src} Recc/Compilation/recc.rc)
 
+    add_custom_command(TARGET ${proc_name} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E env cmd /C
+            "taskkill /F /IM ${proc_name}.exe /T >nul 2>&1 & exit 0"
+        # COMMAND ${CMAKE_COMMAND} -E remove -f "$<TARGET_FILE:${proc_name}>"
+        # COMMENT "Beende laufende ${proc_name}.exe und lösche alte Datei, falls vorhanden"
+    )
+
     # if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Building in DEBUG mode")
 
@@ -452,20 +468,20 @@ foreach(proc_src IN LISTS PROC_SOURCES)
     #
     target_link_libraries(${proc_name} PUBLIC srclib)
 
-    # Kopiert Steam DLL
-    add_custom_command(TARGET ${proc_name} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_DLL_NAME}"
-            $<TARGET_FILE_DIR:${proc_name}>
-        COMMENT "Copying DLLS"
-    )
+    # # Kopiert Steam DLL
+    # add_custom_command(TARGET ${proc_name} POST_BUILD
+    #     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    #         "${CMAKE_SOURCE_DIR}/thirdParty/sdk/redistributable_bin/${STEAM_PLATFORM}/${STEAM_DLL_NAME}"
+    #         $<TARGET_FILE_DIR:${proc_name}>
+    #     COMMENT "Copying DLLS"
+    # )
 
-    # Legt steam_appid file an damit Steam API default ID findet und Start nicht terminiert
-    add_custom_command(TARGET ${proc_name} POST_BUILD
+    # # Legt steam_appid file an damit Steam API default ID findet und Start nicht terminiert
+    # add_custom_command(TARGET ${proc_name} POST_BUILD
 
-        COMMAND ${CMAKE_COMMAND} -E echo "480" > $<TARGET_FILE_DIR:${proc_name}>/steam_appid.txt
-        COMMENT "Generating SteamAppId.txt"
-    )
+    #     COMMAND ${CMAKE_COMMAND} -E echo "480" > $<TARGET_FILE_DIR:${proc_name}>/steam_appid.txt
+    #     COMMENT "Generating SteamAppId.txt"
+    # )
 
     # Einkommentieren für rbfx
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

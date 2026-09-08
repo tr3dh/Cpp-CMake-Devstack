@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# winget install --id=Microsoft.msmpisdk -e
+# winget install --id=Microsoft.msmpi -e
+
 # pacman -S mingw-w64-x86_64-gcc \
 #           mingw-w64-x86_64-cmake \
 #           mingw-w64-x86_64-ninja \
@@ -13,6 +16,10 @@
 #           mingw-w64-x86_64-hypre \
 #           mingw-w64-x86_64-metis \
 #           mingw-w64-x86_64-parmetis \
+#           mingw64/mingw-w64-x86_64-msmpi \
+            # mingw-w64-x86_64-pkgconf
+            # mingw-w64-x86_64-git
+            # mingw-w64-x86_64-make
 #           --needed
 
 ROOT=$(pwd)
